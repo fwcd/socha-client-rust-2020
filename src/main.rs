@@ -33,7 +33,7 @@ fn main() {
     
     let host = parsed_args.opt_str("host").unwrap_or("localhost".to_owned());
     let port = parsed_args.opt_str("port").unwrap_or("13050".to_owned()).parse::<u16>().expect("Invalid port.");
-    let reservation = parsed_args.opt_str("reservation").unwrap_or("".to_owned());
+    let reservation = parsed_args.opt_str("reservation");
     let level = parsed_args.opt_str("level").unwrap_or("Info".to_owned());
     
     // Setup logging
@@ -43,5 +43,5 @@ fn main() {
     let debug_enabled = parsed_args.opt_present("debug");
     let client = SCClient::new(OwnGameLogic, debug_enabled);
     
-    client.run(&host, port).expect("Error while running client.");
+    client.run(&host, port, reservation.as_ref().map(|s| s.as_str())).expect("Error while running client.");
 }
