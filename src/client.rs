@@ -69,7 +69,7 @@ impl<D> SCClient<D> {
 
 		loop {
 			let node = XmlNode::read_from(&mut xml_parser)?;
-			info!("Got XML node {:?}", node);
+			info!("Got XML node {:#?}", node);
 		}
 	}
 }
