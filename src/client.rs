@@ -1,6 +1,9 @@
 use std::net::TcpStream;
-use std::io::{self, BufWriter, Read, Write};
+use std::io::{self, BufWriter, BufReader, Read, Write};
 use log::info;
+use xml::reader::{XmlEvent, EventReader};
+use crate::xml_node::XmlNode;
+use crate::util::SCError;
 
 /// A handler that implements the game player's
 /// behavior, usually employing some custom move
@@ -24,7 +27,7 @@ impl<D> SCClient<D> {
 	
 	/// Blocks the thread and begins reading XML messages
 	/// from the provided address via TCP.
-	pub fn run(self, host: &str, port: u16, reservation: Option<&str>) -> io::Result<()> {
+	pub fn run(self, host: &str, port: u16, reservation: Option<&str>) -> Result<(), SCError> {
 		let address = format!("{}:{}", host, port);
 		let mut stream = TcpStream::connect(&address)?;
 		info!("Connected to {}", address);
@@ -42,10 +45,31 @@ impl<D> SCClient<D> {
 		}
 		
 		if self.debug_mode {
-			// In debug mode, only the XML messages will be output
+			// In debug mode, only the raw XML messages will be output
 			io::copy(&mut stream, &mut io::stdout())?;
+		} else {
+			// In normal mode, begin parsing game messages from the stream
+			self.run_game(BufReader::new(stream))?;
 		}
 		
 		Ok(())
+	}
+	
+	/// Blocks the thread and parses/handles game messages
+	/// from the provided reader.
+	fn run_game<R>(self, reader: R) -> Result<(), SCError> where R: Read {
+		let mut xml_parser = EventReader::new(reader);
+		
+		// Read initial protocol element
+		info!("Waiting for initial <protocol>...");
+		while match xml_parser.next() {
+			Ok(XmlEvent::StartElement { name, .. }) => Some(name),
+			_ => None
+		}.filter(|n| n.local_name == "protocol").is_none() {}
+
+		loop {
+			let node = XmlNode::read_from(&mut xml_parser)?;
+			info!("Got XML node {:?}", node);
+		}
 	}
 }

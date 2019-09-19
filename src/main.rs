@@ -1,5 +1,7 @@
 mod client;
 mod logic;
+mod xml_node;
+mod util;
 
 use std::env;
 use std::str::FromStr;
