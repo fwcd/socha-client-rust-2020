@@ -160,11 +160,39 @@ impl From<AxialCoords> for CubeCoords {
 impl FromStr for PlayerColor {
 	type Err = String;
 
-	fn from_str(s: &str) -> Result<Self, String> {
-		match s {
+	fn from_str(raw: &str) -> Result<Self, String> {
+		match raw {
 			"RED" => Ok(Self::Red),
 			"BLUE" => Ok(Self::Blue),
-			_ => Err(format!("Did not recognize player color {}", s))
+			_ => Err(format!("Did not recognize player color {}", raw))
+		}
+	}
+}
+
+impl FromStr for ScoreAggregation {
+	type Err = String;
+
+	fn from_str(raw: &str) -> Result<Self, String> {
+		match raw {
+			"SUM" => Ok(Self::Sum),
+			"AVERAGE" => Ok(Self::Average),
+			_ => Err(format!("Unknown score aggregation: {}", raw))
+		}
+	}
+}
+
+impl FromStr for ScoreCause {
+	type Err = String;
+
+	fn from_str(raw: &str) -> Result<Self, String> {
+		match raw {
+			"REGULAR" => Ok(Self::Regular),
+			"LEFT" => Ok(Self::Left),
+			"RULE_VIOLATION" => Ok(Self::RuleViolation),
+			"SOFT_TIMEOUT" => Ok(Self::SoftTimeout),
+			"HARD_TIMEOUT" => Ok(Self::HardTimeout),
+			"UNKNOWN" => Ok(Self::Unknown),
+			_ => Err(format!("Unknown score cause: {}", raw))
 		}
 	}
 }
@@ -240,6 +268,44 @@ impl From<&XmlNode> for Result<Field, SCError> {
 	fn from(node: &XmlNode) -> Self {
 		Ok(Field {
 			is_obstructed: node.attribute("isObstructed")?.parse()?
+		})
+	}
+}
+
+impl From<&XmlNode> for Result<GameResult, SCError> {
+	fn from(node: &XmlNode) -> Self {
+		Ok(GameResult {
+			definition: <Result<ScoreDefinition, _>>::from(node.child_by_name("definition")?)?,
+			scores: node.childs_by_name("score").map(<Result<PlayerScore, _>>::from).collect::<Result<_, _>>()?,
+			winners: node.childs_by_name("winner").map(<Result<Player, _>>::from).collect::<Result<_, _>>()?
+		})
+	}
+}
+
+impl From<&XmlNode> for Result<ScoreDefinition, SCError> {
+	fn from(node: &XmlNode) -> Self {
+		Ok(ScoreDefinition {
+			fragments: node.childs_by_name("fragment").map(<Result<ScoreFragment, _>>::from).collect::<Result<_, _>>()?
+		})
+	}
+}
+
+impl From<&XmlNode> for Result<ScoreFragment, SCError> {
+	fn from(node: &XmlNode) -> Self {
+		Ok(ScoreFragment {
+			name: node.attribute("name")?.to_owned(),
+			aggregation: node.attribute("aggregation")?.parse()?,
+			relevant_for_ranking: node.child_by_name("relevantForRanking")?.data().parse()?
+		})
+	}
+}
+
+
+impl From<&XmlNode> for Result<PlayerScore, SCError> {
+	fn from(node: &XmlNode) -> Self {
+		Ok(PlayerScore {
+			cause: node.attribute("cause")?.parse()?,
+			reason: node.attribute("reason")?.to_owned()
 		})
 	}
 }

@@ -49,6 +49,11 @@ impl XmlNode {
 		}
 	}
 	
+	/// Fetches the node's textual contents.
+	pub fn data(&self) -> &str {
+		self.data.as_str()
+	}
+	
 	/// Fetches an attribute's value by key.
 	pub fn attribute(&self, key: &str) -> Result<&str, String> {
 		self.attributes.get(key).map(|s| s.as_str()).ok_or_else(|| format!("No attribute with key '{}' found in <{}>!", key, self.name))
