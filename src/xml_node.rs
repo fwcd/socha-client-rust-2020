@@ -48,4 +48,19 @@ impl XmlNode {
 			}
 		}
 	}
+	
+	/// Fetches an attribute's value by key.
+	pub fn attribute(&self, key: &str) -> Result<&str, String> {
+		self.attributes.get(key).map(|s| s.as_str()).ok_or_else(|| format!("No attribute with key '{}' found in <{}>!", key, self.name))
+	}
+	
+	/// Finds the first child element with the provided tag name.
+	pub fn child_by_name<'a, 'n: 'a>(&'a self, name: &'n str) -> Result<&'a XmlNode, String> {
+		self.childs_by_name(name).next().ok_or_else(|| format!("No <{}> found in <{}>!", name, self.name))
+	}
+	
+	/// Fetches a list of all child elements matching the provided tag name.
+	pub fn childs_by_name<'a, 'n: 'a>(&'a self, name: &'n str) -> impl Iterator<Item=&'a XmlNode> + 'a {
+		self.childs.iter().filter(move |c| c.name == name)
+	}
 }

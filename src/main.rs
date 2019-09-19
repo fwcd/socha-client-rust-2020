@@ -1,4 +1,5 @@
 mod client;
+mod game;
 mod logic;
 mod xml_node;
 mod util;
