@@ -26,7 +26,8 @@ pub struct Room {
 pub enum Data {
 	WelcomeMessage { color: PlayerColor },
 	Memento { state: GameState },
-	MoveRequest
+	MoveRequest,
+	GameResult { definition: ScoreDefinition }
 }
 
 /// A player color in the game.
@@ -85,6 +86,53 @@ pub struct Board {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Field {
 	pub is_obstructed: bool
+}
+
+/// The final result of a game.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GameResult {
+	pub definition: ScoreDefinition,
+	pub scores: Vec<PlayerScore>,
+	pub winners: Vec<Player>
+}
+
+/// The definition of a score.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ScoreDefinition {
+	pub fragments: Vec<ScoreFragment>
+}
+
+/// A single score fragment.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ScoreFragment {
+	pub name: String,
+	pub aggregation: ScoreAggregation,
+	pub relevant_for_ranking: bool
+}
+
+/// Determines how scores should be aggregated (e.g. summed up or averaged over).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ScoreAggregation {
+	Sum,
+	Average
+}
+
+/// Determines the cause of a game score.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ScoreCause {
+	Regular,
+	Left,
+	RuleViolation,
+	SoftTimeout,
+	HardTimeout,
+	Unknown
+}
+
+/// The score of a game player.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PlayerScore {
+	pub cause: ScoreCause,
+	pub reason: String
 }
 
 // General implementations
