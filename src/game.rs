@@ -135,6 +135,30 @@ pub struct PlayerScore {
 	pub reason: String
 }
 
+/// A transition between two game states.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Move<C=AxialCoords> {
+	SetMove { piece: Piece, destination: C },
+	DragMove { start: C, end: C }
+}
+
+/// A game piece.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Piece {
+	pub owner: PlayerColor,
+	pub piece_type: PieceType
+}
+
+// A game piece type.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PieceType {
+	Ant,
+	Bee,
+	Beetle,
+	Grasshopper,
+	Spider
+}
+
 // General implementations
 
 impl Board {

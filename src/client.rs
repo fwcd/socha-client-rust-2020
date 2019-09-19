@@ -4,12 +4,22 @@ use log::info;
 use xml::reader::{XmlEvent, EventReader};
 use crate::xml_node::XmlNode;
 use crate::util::SCError;
+use crate::game::*;
 
 /// A handler that implements the game player's
 /// behavior, usually employing some custom move
 /// selection strategy.
 pub trait SCClientDelegate {
-	// TODO
+	/// Invoked whenever the game state updates.
+	fn on_update_state(&mut self, state: &GameState) {}
+	
+	/// Invoked when the welcome message is received
+	/// with the player's color.
+	fn on_welcome_message(&mut self, color: &PlayerColor) {}
+	
+	/// Requests a move from the delegate. This method
+	/// should implement the "main" game logic.
+	fn move_request(&mut self, state: &GameState, me: &Player, opponent: &Player) -> Move;
 }
 
 /// The client which handles XML requests, manages
