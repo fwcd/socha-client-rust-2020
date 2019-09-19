@@ -1,6 +1,7 @@
 use std::collections::{HashMap, VecDeque};
-use std::io::Read;
-use xml::reader::{EventReader, XmlEvent};
+use std::io::{Read, Write};
+use xml::reader::{EventReader, XmlEvent as XmlReadEvent};
+use xml::writer::{EventWriter, XmlEvent as XmlWriteEvent};
 use crate::util::SCError;
 
 /// A deserialized, in-memory tree-representation
@@ -16,12 +17,12 @@ pub struct XmlNode {
 impl XmlNode {
 	/// Deserializes an XML node tree
 	/// from the given XML event reader.
-	pub fn read_from<R>(xml_parser: &mut EventReader<R>) -> Result<XmlNode, SCError> where R: Read {
+	pub fn read_from<R>(reader: &mut EventReader<R>) -> Result<XmlNode, SCError> where R: Read {
 		let mut node_stack = VecDeque::<XmlNode>::new();
 		
 		loop {
-			match xml_parser.next() {
-				Ok(XmlEvent::StartElement { name, attributes, .. }) => {
+			match reader.next() {
+				Ok(XmlReadEvent::StartElement { name, attributes, .. }) => {
 					let node = XmlNode {
 						name: name.local_name,
 						data: String::new(),
@@ -30,7 +31,7 @@ impl XmlNode {
 					};
 					node_stack.push_back(node);
 				},
-				Ok(XmlEvent::EndElement { .. }) => {
+				Ok(XmlReadEvent::EndElement { .. }) => {
 					let node = node_stack.pop_back().ok_or_else(|| "Unexpectedly found empty XML node stack while popping off node".to_owned())?;
 					if let Some(mut parent) = node_stack.pop_back() {
 						parent.childs.push(node);
@@ -39,7 +40,7 @@ impl XmlNode {
 						return Ok(node);
 					}
 				},
-				Ok(XmlEvent::Characters(content)) => {
+				Ok(XmlReadEvent::Characters(content)) => {
 					let node = node_stack.back_mut().ok_or_else(|| "Unexpectedly found empty XML node stack while trying to add characters".to_owned())?;
 					node.data += content.as_str();
 				},
@@ -47,6 +48,22 @@ impl XmlNode {
 				_ => ()
 			}
 		}
+	}
+	
+	/// Serializes the node to an XML string using a tree traversal.
+	pub fn write_to<W>(&self, writer: &mut EventWriter<W>) -> Result<(), SCError> where W: Write {
+		let mut start_element = XmlWriteEvent::start_element(self.name.as_str());
+		for (key, value) in self.attributes {
+			start_element.attr(key.as_str(), value.as_str());
+		}
+		writer.write(start_element);
+		
+		for child in self.childs {
+			child.write_to(writer);
+		}
+		
+		writer.write(XmlWriteEvent::end_element());
+		Ok(())
 	}
 	
 	/// Fetches the node's textual contents.

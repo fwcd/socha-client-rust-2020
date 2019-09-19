@@ -333,3 +333,5 @@ impl From<&XmlNode> for Result<PlayerScore, SCError> {
 		})
 	}
 }
+
+// TODO: Into XML node conversions
