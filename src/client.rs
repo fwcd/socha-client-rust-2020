@@ -13,13 +13,13 @@ pub trait SCClientDelegate {
 /// the game state and invokes the delegate.
 pub struct SCClient<D> {
 	delegate: D,
-	debug_enabled: bool
+	debug_mode: bool
 }
 
 impl<D> SCClient<D> {
 	/// Creates a new client using the specified delegate.
-	pub fn new(delegate: D, debug_enabled: bool) -> Self {
-		Self { delegate: delegate, debug_enabled: debug_enabled }
+	pub fn new(delegate: D, debug_mode: bool) -> Self {
+		Self { delegate: delegate, debug_mode: debug_mode }
 	}
 	
 	/// Blocks the thread and begins reading XML messages
@@ -41,7 +41,7 @@ impl<D> SCClient<D> {
 			writer.write(join_xml.as_bytes())?;
 		}
 		
-		if self.debug_enabled {
+		if self.debug_mode {
 			// In debug mode, only the XML messages will be output
 			io::copy(&mut stream, &mut io::stdout())?;
 		}

@@ -40,8 +40,8 @@ fn main() {
     SimpleLogger::init(LevelFilter::from_str(&level).expect("Invalid log level."), Config::default()).expect("Could not initialize logger.");
     
     // Setup the client and the delegate
-    let debug_enabled = parsed_args.opt_present("debug");
-    let client = SCClient::new(OwnGameLogic, debug_enabled);
+    let debug_mode = parsed_args.opt_present("debug");
+    let client = SCClient::new(OwnGameLogic, debug_mode);
     
     client.run(&host, port, reservation.as_ref().map(|s| s.as_str())).expect("Error while running client.");
 }
