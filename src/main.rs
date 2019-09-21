@@ -5,7 +5,7 @@ use std::str::FromStr;
 use simplelog::{SimpleLogger, Config};
 use log::LevelFilter;
 use getopts::Options;
-use socha_client_base::client::SCClient;
+use socha_client_base::client::{SCClient, DebugMode};
 use logic::OwnGameLogic;
 
 fn print_usage(program: &str, options: Options) {
@@ -21,7 +21,8 @@ fn main() {
     options.optopt("p", "port", "The game server's port", "PORT");
     options.optopt("r", "reservation", "A game reservation", "RESERVATION");
     options.optopt("l", "level", "Optionally provides a custom log level ('Info' by default)", "LEVEL");
-    options.optflag("d", "debug", "Prints all incoming XML messages to the console for debugging");
+    options.optflag("d", "debug-reader", "Reads incoming XML messages from the console for debugging");
+    options.optflag("D", "debug-writer", "Prints incoming XML messages to the console for debugging");
     options.optflag("H", "help", "Prints usage info");
     
     let parsed_args = options.parse(&args[1..]).expect("Could not parse arguments!");
@@ -39,7 +40,10 @@ fn main() {
     SimpleLogger::init(LevelFilter::from_str(&level).expect("Invalid log level."), Config::default()).expect("Could not initialize logger.");
     
     // Setup the client and the delegate
-    let debug_mode = parsed_args.opt_present("debug");
+    let debug_mode = DebugMode {
+        debug_reader: parsed_args.opt_present("debug-reader"),
+        debug_writer: parsed_args.opt_present("debug-writer")
+    };
     let client = SCClient::new(OwnGameLogic, debug_mode);
     
     client.run(&host, port, reservation.as_ref().map(|s| s.as_str())).expect("Error while running client.");
