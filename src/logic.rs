@@ -1,7 +1,7 @@
 use socha_client_base::client::SCClientDelegate;
 use socha_plugin_2020::{plugin::SCPlugin2020, game::*};
 use rand::seq::SliceRandom;
-use log::info;
+use log::{info, debug};
 
 /// An empty game logic structure that
 /// implements the client delegate trait
@@ -16,12 +16,12 @@ impl SCClientDelegate for OwnGameLogic {
 		// Implement custom game logic here!
 		let mut random = rand::thread_rng();
 		let moves = state.possible_moves(my_color);
-		let chosen_move = moves.choose(&mut random).cloned().expect("No move found");
-		info!("Chose {:?} from {} moves", chosen_move, moves.len());
-		chosen_move
+		let game_move = moves.choose(&mut random).cloned().expect("No move found");
+		info!("Chose {:?} from {} moves", game_move, moves.len());
+		game_move
 	}
 	
 	fn on_update_state(&mut self, state: &GameState) {
-		info!("New board:\n{}", state.board);
+		debug!("New board:\n{}", state.board);
 	}
 }
