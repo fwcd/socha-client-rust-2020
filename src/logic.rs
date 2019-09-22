@@ -18,4 +18,8 @@ impl SCClientDelegate for OwnGameLogic {
 		info!("Chose {:?} from {} moves", first_move, moves.len());
 		first_move.expect("No move found")
 	}
+	
+	fn on_update_state(&mut self, state: &GameState) {
+		info!("New board:\n{}", state.board);
+	}
 }

@@ -7,8 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-socha-client-base = { git = "https://github.com/fwcd/socha-rust-sdk", rev = "6885e90" }
-socha-plugin-2020 = { git = "https://github.com/fwcd/socha-rust-sdk", rev = "6885e90" }
+socha-client-base = { git = "https://github.com/fwcd/socha-rust-sdk", rev = "955c0b7" }
+socha-plugin-2020 = { git = "https://github.com/fwcd/socha-rust-sdk", rev = "955c0b7" }
 getopts = "0.2.21"
 log = "0.4.8"
 xml-rs = "0.8.0"
