@@ -1,5 +1,5 @@
 //! The game structures for the "Hive" game.
-//! Source: Partially translated from https://github.com/CAU-Kiel-Tech-Inf/socha/blob/8399e73673971427624a73ef42a1b023c69268ec/plugin/src/shared/sc/plugin2020/util/GameRuleLogic.kt
+//! Source: Partially translated from https://github.com/software-challenge/backend/blob/8399e73673971427624a73ef42a1b023c69268ec/plugin/src/shared/sc/plugin2020/util/GameRuleLogic.kt
 
 mod board;
 mod coords;
