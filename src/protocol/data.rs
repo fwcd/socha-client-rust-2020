@@ -2,12 +2,7 @@ use std::convert::TryFrom;
 use crate::{util::{SCError, SCResult, FromXmlNode, XmlNode}, game::{Move, PlayerColor, GameState}};
 use super::GameResult;
 
-/// A polymorphic container for game data
-/// used by the protocol. It is parameterized
-/// by the player color (`C`), the game state (`S`)
-/// and the player structure (`P`). These types
-/// are implemented independently of the base
-/// protocol for each year's game.
+/// A container for game data used by the protocol.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Data {
     WelcomeMessage { color: PlayerColor },
