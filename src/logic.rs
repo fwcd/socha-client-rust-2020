@@ -1,7 +1,6 @@
-use socha_client_base::client::SCClientDelegate;
-use socha_plugin_2020::{plugin::SCPlugin2020, game::*};
 use rand::seq::SliceRandom;
 use log::{info, debug};
+use crate::{client::SCClientDelegate, game::{GameState, PlayerColor, Move}};
 
 /// An empty game logic structure that
 /// implements the client delegate trait
@@ -10,8 +9,6 @@ use log::{info, debug};
 pub struct OwnGameLogic;
 
 impl SCClientDelegate for OwnGameLogic {
-	type Plugin = SCPlugin2020;
-	
 	fn request_move(&mut self, state: &GameState, my_color: PlayerColor) -> Move {
 		// Implement custom game logic here!
 		let mut random = rand::thread_rng();

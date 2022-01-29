@@ -1,11 +1,15 @@
 mod logic;
+mod client;
+mod game;
+mod protocol;
+mod util;
 
 use std::env;
 use std::str::FromStr;
 use simplelog::{SimpleLogger, Config};
 use log::LevelFilter;
 use getopts::Options;
-use socha_client_base::client::{SCClient, DebugMode};
+use client::{SCClient, DebugMode};
 use logic::OwnGameLogic;
 
 fn print_usage(program: &str, options: Options) {
