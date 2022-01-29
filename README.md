@@ -9,7 +9,7 @@ The client implements the XML protocol for communication with the game server, t
 To build the client into a statically linked executable, run
 
 ```bash
-cargo build
+cargo build --release
 ```
 
 ## Running
@@ -19,7 +19,7 @@ First make sure to have the game server for Hive running (you can [download a co
 To start an instance of the client, you can now run
 
 ```bash
-cargo run
+cargo run --release
 ```
 
 > Note that you will need another client (either a second instance of this one or another one) to play.
